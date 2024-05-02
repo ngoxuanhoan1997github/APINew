@@ -47,9 +47,9 @@ namespace AppAPI
                 client.Headers.Add("content-type", "application/json" ) ;
                 client.Headers.Add("APIKey", "Th8hjfgtr@475862@FHak73@hfgidj") ;
 
-          
 
-                var url = $"http://apipos.bitis-corp.com/api/BienNhan/GetBN/"+ mach+"/"+ ngayht;
+                var url = linkapi + $"/api/BienNhan/GetBN/" + mach + "/" + ngayht;
+                //var url = $"http://apipos.bitis-corp.com/api/BienNhan/GetBN/"+ mach+"/"+ ngayht;
 
                 string response = client.DownloadString(url);
                 requestdata = JsonConvert.DeserializeObject<List<BienNhan>>(response);

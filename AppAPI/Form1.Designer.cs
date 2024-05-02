@@ -68,7 +68,7 @@ namespace AppAPI
             this.txtngay.Name = "txtngay";
             this.txtngay.Size = new System.Drawing.Size(100, 20);
             this.txtngay.TabIndex = 3;
-            this.txtngay.Text = "2024-04-25";
+            this.txtngay.Text = "2024-05-02";
             // 
             // Form1
             // 
