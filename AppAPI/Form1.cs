@@ -16,7 +16,10 @@ namespace AppAPI
     public partial class Form1 : Form
     {
         string linkapi = "http://apipos.bitis-corp.com";
+        string linkapi2 = "https://apiscs.bitisgroup.vn";
+        string linkapi3 = "http://192.168.24.108:8501";
         DataTable dt = new DataTable();
+        DataTable dt2 = new DataTable();
         public Form1()
         {
             InitializeComponent();
@@ -85,7 +88,22 @@ namespace AppAPI
 
         private void btnAPI2_Click(object sender, EventArgs e)
         {
+            using(var client = new WebClient())
+            {
+                string a1 = "BFW003688DEN37";
+                string a2 = "1601";
+                string a3 = "admin";
 
+                List<TonKho> requestdata = new List<TonKho>();
+                TonKho tonkho = new TonKho();
+
+                client.Headers.Add("content-type", "application/json");
+                client.Headers.Add("APIKey", "ISFGvawyliuksFGVLiQUWYLGFBKASJfgKJZDGf<k>HGLAISDUKJYFGBLAI");
+
+                var url = linkapi2 + $"/api/data/inventory?S_MATNR=" + a1 + "&S_WERKS=" + a2 + "&S_TEXT=" + a3;
+                string response = client.DownloadString(url);
+                requestdata = JsonConvert.DeserializeObject<List<TonKho>>(response);
+            }
         }
     }
 }
