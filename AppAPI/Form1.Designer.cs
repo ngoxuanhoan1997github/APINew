@@ -33,6 +33,7 @@ namespace AppAPI
             this.btnLayAPI = new System.Windows.Forms.Button();
             this.txtmasite = new System.Windows.Forms.TextBox();
             this.txtngay = new System.Windows.Forms.TextBox();
+            this.btnAPI2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,11 +71,22 @@ namespace AppAPI
             this.txtngay.TabIndex = 3;
             this.txtngay.Text = "2024-05-02";
             // 
+            // btnAPI2
+            // 
+            this.btnAPI2.Location = new System.Drawing.Point(472, 12);
+            this.btnAPI2.Name = "btnAPI2";
+            this.btnAPI2.Size = new System.Drawing.Size(75, 23);
+            this.btnAPI2.TabIndex = 4;
+            this.btnAPI2.Text = "Lấy API";
+            this.btnAPI2.UseVisualStyleBackColor = true;
+            this.btnAPI2.Click += new System.EventHandler(this.btnAPI2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1456, 588);
+            this.Controls.Add(this.btnAPI2);
             this.Controls.Add(this.txtngay);
             this.Controls.Add(this.txtmasite);
             this.Controls.Add(this.btnLayAPI);
@@ -93,6 +105,7 @@ namespace AppAPI
         private System.Windows.Forms.Button btnLayAPI;
         private System.Windows.Forms.TextBox txtmasite;
         private System.Windows.Forms.TextBox txtngay;
+        private System.Windows.Forms.Button btnAPI2;
     }
 }
 

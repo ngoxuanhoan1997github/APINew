@@ -82,5 +82,10 @@ namespace AppAPI
                     MessageBox.Show("Không có dữ liệu");
             }
         }
+
+        private void btnAPI2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
