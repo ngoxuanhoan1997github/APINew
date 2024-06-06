@@ -8,4 +8,6 @@ C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\obj\Debug\AppAPI.exe
 C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\obj\Debug\AppAPI.pdb
 C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\Newtonsoft.Json.dll
 C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\Newtonsoft.Json.xml
-C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\obj\Debug\AppAPI.csprojResolveAssemblyReference.cache
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\obj\Debug\AppAPI.csproj.AssemblyReference.cache
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\obj\Debug\AppAPI.csproj.CoreCompileInputs.cache
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\obj\Debug\AppAPI.csproj.CopyComplete
