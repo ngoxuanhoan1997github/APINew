@@ -43,12 +43,15 @@ namespace AppAPI
             this.txtnoidung = new System.Windows.Forms.TextBox();
             this.txtsotien = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.btnCreateQRVNPAY = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // btnQRcode
             // 
-            this.btnQRcode.Location = new System.Drawing.Point(573, 217);
+            this.btnQRcode.Location = new System.Drawing.Point(573, 231);
             this.btnQRcode.Name = "btnQRcode";
             this.btnQRcode.Size = new System.Drawing.Size(75, 23);
             this.btnQRcode.TabIndex = 0;
@@ -173,11 +176,33 @@ namespace AppAPI
             this.pictureBox1.TabIndex = 15;
             this.pictureBox1.TabStop = false;
             // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox2.Location = new System.Drawing.Point(678, 319);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(228, 242);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox2.TabIndex = 16;
+            this.pictureBox2.TabStop = false;
+            // 
+            // btnCreateQRVNPAY
+            // 
+            this.btnCreateQRVNPAY.Location = new System.Drawing.Point(526, 538);
+            this.btnCreateQRVNPAY.Name = "btnCreateQRVNPAY";
+            this.btnCreateQRVNPAY.Size = new System.Drawing.Size(122, 23);
+            this.btnCreateQRVNPAY.TabIndex = 17;
+            this.btnCreateQRVNPAY.Text = "Create QR VNPAY";
+            this.btnCreateQRVNPAY.UseVisualStyleBackColor = true;
+            this.btnCreateQRVNPAY.Click += new System.EventHandler(this.btnCreateQRVNPAY_Click);
+            // 
             // VNPay_QR
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(918, 266);
+            this.ClientSize = new System.Drawing.Size(918, 573);
+            this.Controls.Add(this.btnCreateQRVNPAY);
+            this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtsotien);
             this.Controls.Add(this.txtnoidung);
@@ -197,6 +222,7 @@ namespace AppAPI
             this.Text = "VNPay_QR";
             this.Load += new System.EventHandler(this.VNPay_QR_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,5 +244,7 @@ namespace AppAPI
         private System.Windows.Forms.TextBox txtnoidung;
         private System.Windows.Forms.TextBox txtsotien;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.Button btnCreateQRVNPAY;
     }
 }

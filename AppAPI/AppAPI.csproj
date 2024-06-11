@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\APIRequest.cs" />
+    <Compile Include="Class\API_VNPay.cs" />
     <Compile Include="Class\Bank.cs" />
     <Compile Include="Class\BienNhan.cs" />
     <Compile Include="Class\TonKho.cs" />
