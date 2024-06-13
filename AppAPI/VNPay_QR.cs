@@ -12,11 +12,19 @@ using System.Windows.Forms;
 using AppAPI.Class;
 using RestSharp;
 using System.IO;
+using System.Net.Http;
+using ZXing;
+using ZXing.Common;
+using ZXing.QrCode;
 
 namespace AppAPI
 {
     public partial class VNPay_QR : Form
     {
+        private const string VnpayApiUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        private const string MerchantId = "N0B3T9UT";
+        private const string AccessKey = "QVU13R4JBHMR1M4JWJ0CBN0CBUISMQBK";
+        private const string SecretKey = "QVU13R4JBHMR1M4JWJ0CBN0CBUISMQBK";
         public VNPay_QR()
         {
             InitializeComponent();
@@ -54,7 +62,7 @@ namespace AppAPI
             //apiRequest.acqId = 970445;
             apiRequest.accountNo = txtstk.Text;
             apiRequest.accountName = txttentk.Text;
-            apiRequest.amount =Convert.ToInt32(txtsotien.Text);
+            apiRequest.amount = Convert.ToInt32(txtsotien.Text);
             apiRequest.format = "Text";
             apiRequest.template = cbbtemplate.Text.ToString();
             apiRequest.addInfo = txtnoidung.Text;
@@ -73,63 +81,65 @@ namespace AppAPI
             pictureBox1.Image = image;
         }
 
-        private void btnCreateQRVNPAY_Click(object sender, EventArgs e)
+        private async void btnCreateQRVNPAY_Click(object sender, EventArgs e)
         {
-            //var api_vnpay = new API_VNPay();
-            //api_vnpay.userId = "userId";
-            //api_vnpay.checksum = "b7eaae2265fada2d6e0dd1ad8429bbad0eec85f5867d3f0c101a19385d777dc6";
-            //api_vnpay.orderCode = "VNP20220819000001";
-            //api_vnpay.payments.qr.methodCode = "VNPAY_QRCODE";
-            //api_vnpay.payments.qr.amount = 33000;
-            //api_vnpay.payments.qr.qrWidth = 0;
-            //api_vnpay.payments.qr.qrHeight = 0;
-            //api_vnpay.payments.qr.qrImageType = 0;
-            //api_vnpay.payments.qr.customerPhone = "1234567890";
-            //api_vnpay.payments.qr.merchantMethodCode = "VNPAY_TEST_PE1118CC51277_QRCODE";
-            //api_vnpay.payments.qr.clientTransactionCode = "HNPMC25702";
-            //api_vnpay.cancelUrl = "https://vnpay.vn/cancel";
-            //api_vnpay.successUrl = "https://vnpay.vn/success";
-            //api_vnpay.terminalCode = "PE1118CC51277";
-            //api_vnpay.merchantCode = "VNPAY_TEST";
-            //api_vnpay.totalPaymentAmount = 33000;
-            //api_vnpay.expiredDate = "2111050834";
-
-            var api_vnpay = new API_VNPay
+            try
             {
-                userId = "userId",
-                checksum = "b7eaae2265fada2d6e0dd1ad8429bbad0eec85f5867d3f0c101a19385d777dc6",
-                orderCode = "VNP20220819000001",
-                payments = new Payments
-                {
-                    qr = new Qr
-                    {
-                        methodCode = "VNPAY_QRCODE",
-                        amount = 33000,
-                        qrWidth = 0,
-                        qrHeight = 0,
-                        qrImageType = 0,
-                        customerPhone = "1234567890",
-                        merchantMethodCode = "VNPAY_TEST_PE1118CC51277_QRCODE",
-                        clientTransactionCode = "HNPMC25702"
-                    }
-                },
-                cancelUrl = "https://vnpay.vn/cancel",
-                successUrl = "https://vnpay.vn/success",
-                terminalCode = "PE1118CC51277",
-                merchantCode = "VNPAY_TEST",
-                totalPaymentAmount = 33000,
-                expiredDate = "2111050834"
-            };
-            var jsonRequest = JsonConvert.SerializeObject(api_vnpay);
+                // Create payment request and get QR code data from VNPAY API
+                string qrData = await CreatePaymentRequestAsync(100.0, "ORDER123");
 
-            var client = new RestClient("https://sandbox.vnpayment.vn/merchant_webapi/api/transaction");
-            var request = new RestRequest();
-            request.Method = Method.Post;
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("application/json", jsonRequest, ParameterType.RequestBody);
-            var response = client.Execute(request);
-            var content = response.Content;
-            var dataResult = JsonConvert.DeserializeObject<APIReponse>(content);
+                if (!string.IsNullOrEmpty(qrData))
+                {
+                    // Generate QR code image from data
+                    Bitmap qrCodeImage = GenerateQRCode(qrData);
+
+                    // Display QR code image
+                    pictureBox2.Image = qrCodeImage;
+                }
+                else
+                {
+                    MessageBox.Show("Failed to generate QR code.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+        private async Task<string> CreatePaymentRequestAsync(double amount, string orderId)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                var paymentRequest = new
+                {
+                    merchantId = MerchantId,
+                    amount = amount,
+                    orderId = orderId,
+                    orderInfo = "Payment for order #" + orderId,
+                    returnUrl = "YOUR_RETURN_URL"
+                    // Add other required parameters
+                };
+
+                var requestContent = new StringContent(JsonConvert.SerializeObject(paymentRequest), Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(VnpayApiUrl, requestContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    // Handle error response
+                    return null;
+                }
+            }
+        }
+        private Bitmap GenerateQRCode(string qrData)
+        {
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix qrBitMatrix = qrCodeWriter.encode(qrData, BarcodeFormat.QR_CODE, 300, 300);
+            BarcodeWriter barcodeWriter = new BarcodeWriter();
+            return barcodeWriter.Write(qrBitMatrix);
         }
     }
 }

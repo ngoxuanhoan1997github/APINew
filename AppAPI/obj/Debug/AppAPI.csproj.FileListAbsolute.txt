@@ -32,3 +32,7 @@ C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\System.Text.Encodings.We
 C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\System.Text.Json.xml
 C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\System.Threading.Tasks.Extensions.xml
 C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\System.ValueTuple.xml
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\zxing.dll
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\zxing.presentation.dll
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\zxing.xml
+C:\Users\hoan.nx\Desktop\GitHub\AppAPI\AppAPI\bin\Debug\zxing.presentation.xml

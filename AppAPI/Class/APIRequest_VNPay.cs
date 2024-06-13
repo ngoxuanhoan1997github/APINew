@@ -23,7 +23,7 @@ namespace AppAPI.Class
         public Qr qr { get; set; }
     }
 
-    public class API_VNPay
+    public class APIRequest_VNPay
     {
         public string userId { get; set; }
         public string checksum { get; set; }
