@@ -13,18 +13,15 @@ using AppAPI.Class;
 using RestSharp;
 using System.IO;
 using System.Net.Http;
-using ZXing;
-using ZXing.Common;
-using ZXing.QrCode;
+using System.Security.Cryptography;
 
 namespace AppAPI
 {
     public partial class VNPay_QR : Form
     {
-        private const string VnpayApiUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        private const string MerchantId = "N0B3T9UT";
-        private const string AccessKey = "QVU13R4JBHMR1M4JWJ0CBN0CBUISMQBK";
-        private const string SecretKey = "QVU13R4JBHMR1M4JWJ0CBN0CBUISMQBK";
+        private const string VnpayApiUrl = "https://payment-gateway.vnpaytest.vn/api/v2/payment/init/multi-v2.1";
+        private const string VnpayApiUrl2 = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        string secretKey = "QVU13R4JBHMR1M4JWJ0CBN0CBUISMQBK";
         public VNPay_QR()
         {
             InitializeComponent();
@@ -54,7 +51,31 @@ namespace AppAPI
             System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
             return image;
         }
+        //Băm checksum
+        public string Checksum()
+        {
+            string dataToHash = secretKey+ "order-62 | toet | N0B3T9UT | FTI | 234000 | https://vnpay.vn/success | https://vnpay.vn/cancel | HNPMC25702 | FTI_PE4019B260249_QR_CODE | VNPAY_QRCODE | 234000"; // Dữ liệu cần băm
+            // Tính toán checksum
+            string checksum = CalculateChecksum(dataToHash);
+            // In ra kết quả checksum
+            return checksum;
+        }
+        public static string CalculateChecksum(string data)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // Convert dữ liệu từ string sang byte array
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(data));
 
+                // Chuyển byte array sang string hex
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2")); // Format byte thành hex
+                }
+                return builder.ToString();
+            }
+        }
         private void btnQRcode_Click(object sender, EventArgs e)
         {
             var apiRequest = new APIRequest();
@@ -81,65 +102,62 @@ namespace AppAPI
             pictureBox1.Image = image;
         }
 
-        private async void btnCreateQRVNPAY_Click(object sender, EventArgs e)
+        private void btnCreateQRVNPAY_Click(object sender, EventArgs e)
         {
-            try
+            
+            DateTime dateTime = DateTime.Now;
+            //Lấy ngày hiện tại
+            string nam = dateTime.ToString("yy");
+            string thang = dateTime.Month.ToString("D2");
+            string ngay = dateTime.Day.ToString("D2");
+
+            //Lấy thời gian hiện tại
+            DateTime newTime = dateTime.AddMinutes(5);
+            string gio = dateTime.Hour.ToString("D2");
+            string phut = newTime.Minute.ToString("D2");
+
+            //Băm checksum
+            string checksum = Checksum();
+
+            //Giá trị đầu vào
+            var apiRequest_vnpay = new APIRequest_VNPay
             {
-                // Create payment request and get QR code data from VNPAY API
-                string qrData = await CreatePaymentRequestAsync(100.0, "ORDER123");
+                userId = "toet",
+                checksum = checksum,
+                orderCode = "order-62",
+                payments = new Payments
+                {
+                    qr = new Qr
+                    {
+                        methodCode = "VNPAY_QRCODE",
+                        amount = 234000,
+                        qrWidth = 400,
+                        qrHeight = 400,
+                        qrImageType = 0,
+                        customerPhone = "",
+                        merchantMethodCode = "FTI_PE4019B260249_QR_CODE",
+                        clientTransactionCode = "HNPMC25702"
+                    }
+                },
+                cancelUrl = "https://vnpay.vn/cancel",
+                successUrl = "https://vnpay.vn/success",
+                terminalCode = "DEMO",
+                merchantCode = "FTI",
+                totalPaymentAmount = 234000,
+                expiredDate = nam + thang + ngay + gio + phut
+            };
 
-                if (!string.IsNullOrEmpty(qrData))
-                {
-                    // Generate QR code image from data
-                    Bitmap qrCodeImage = GenerateQRCode(qrData);
+            var jsonRequest = JsonConvert.SerializeObject(apiRequest_vnpay);
 
-                    // Display QR code image
-                    pictureBox2.Image = qrCodeImage;
-                }
-                else
-                {
-                    MessageBox.Show("Failed to generate QR code.");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-        private async Task<string> CreatePaymentRequestAsync(double amount, string orderId)
-        {
-            using (HttpClient httpClient = new HttpClient())
-            {
-                var paymentRequest = new
-                {
-                    merchantId = MerchantId,
-                    amount = amount,
-                    orderId = orderId,
-                    orderInfo = "Payment for order #" + orderId,
-                    returnUrl = "YOUR_RETURN_URL"
-                    // Add other required parameters
-                };
-
-                var requestContent = new StringContent(JsonConvert.SerializeObject(paymentRequest), Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(VnpayApiUrl, requestContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response.Content.ReadAsStringAsync();
-                }
-                else
-                {
-                    // Handle error response
-                    return null;
-                }
-            }
-        }
-        private Bitmap GenerateQRCode(string qrData)
-        {
-            QRCodeWriter qrCodeWriter = new QRCodeWriter();
-            BitMatrix qrBitMatrix = qrCodeWriter.encode(qrData, BarcodeFormat.QR_CODE, 300, 300);
-            BarcodeWriter barcodeWriter = new BarcodeWriter();
-            return barcodeWriter.Write(qrBitMatrix);
+            //use restsharp for request api
+            var client = new RestClient(VnpayApiUrl);
+            var request = new RestRequest();
+            request.Method = Method.Post;
+            request.AddHeader("Accept", "application/json");
+            request.AddParameter("application/json", jsonRequest, ParameterType.RequestBody);
+            var response = client.Execute(request);
+            var content = response.Content;
+            var dataResult = JsonConvert.DeserializeObject<APIResponse_VNPay>(content);
         }
     }
 }
