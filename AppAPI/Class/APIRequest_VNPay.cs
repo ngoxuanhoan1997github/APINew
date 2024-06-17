@@ -36,4 +36,12 @@ namespace AppAPI.Class
         public int totalPaymentAmount { get; set; }
         public string expiredDate { get; set; }
     }
+    public class APIResponse_VNPay
+    {
+        public string code { get; set; }
+        public string message { get; set; }
+        public string orderCode { get; set; }
+        public Payments payments { get; set; }
+        public string paymentRequestId { get; set; }
+    }
 }

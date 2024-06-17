@@ -89,9 +89,9 @@
   <ItemGroup>
     <Compile Include="Class\APIRequest.cs" />
     <Compile Include="Class\APIRequest_VNPay.cs" />
-    <Compile Include="Class\APIResponse_VNPay.cs" />
     <Compile Include="Class\Bank.cs" />
     <Compile Include="Class\BienNhan.cs" />
+    <Compile Include="Class\IPNRequest_VNPay.cs" />
     <Compile Include="Class\TonKho.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

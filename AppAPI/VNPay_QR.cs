@@ -20,8 +20,7 @@ namespace AppAPI
     public partial class VNPay_QR : Form
     {
         private const string VnpayApiUrl = "https://payment-gateway.vnpaytest.vn/api/v2/payment/init/multi-v2.1";
-        private const string VnpayApiUrl2 = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        string secretKey = "QVU13R4JBHMR1M4JWJ0CBN0CBUISMQBK";
+        
         public VNPay_QR()
         {
             InitializeComponent();
@@ -52,28 +51,28 @@ namespace AppAPI
             return image;
         }
         //Băm checksum
-        public string Checksum()
+        public string Checksum(string ordercode, string userId, string terminalCode, string merchantCode, int totalPaymentAmount, string successUrl, string cancelUrl, string clientTransactionCode, string merchantMethodCode, string methodCode, int amount)
         {
-            string dataToHash = secretKey+ "order-62 | toet | N0B3T9UT | FTI | 234000 | https://vnpay.vn/success | https://vnpay.vn/cancel | HNPMC25702 | FTI_PE4019B260249_QR_CODE | VNPAY_QRCODE | 234000"; // Dữ liệu cần băm
-            // Tính toán checksum
-            string checksum = CalculateChecksum(dataToHash);
-            // In ra kết quả checksum
+            string Keysecret = "72b1dcb6c927c619df57e0cb2cb68aa9";
+            string dataQrVnpay = Keysecret + ordercode + "|" + userId + "|" + terminalCode + "|" + merchantCode + "|" + totalPaymentAmount + "|" + successUrl + "|" + cancelUrl + "|" + clientTransactionCode + "|" + merchantMethodCode + "|" + methodCode + "|" + amount;
+            string secretKey = Keysecret;
+
+            string checksum = CalculateChecksum(dataQrVnpay, secretKey);
             return checksum;
         }
-        public static string CalculateChecksum(string data)
+        public static string CalculateChecksum(string data, string secretKey)
         {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // Convert dữ liệu từ string sang byte array
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(data));
+            byte[] keyBytes = Encoding.UTF8.GetBytes(secretKey);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(data);
 
-                // Chuyển byte array sang string hex
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2")); // Format byte thành hex
-                }
-                return builder.ToString();
+            using (HMACSHA256 hmac = new HMACSHA256(keyBytes))
+            {
+                byte[] hashBytes = hmac.ComputeHash(inputBytes);
+                string base64Checksum = Convert.ToBase64String(hashBytes);
+
+                Console.WriteLine("Input String: " + data);
+                Console.WriteLine("HMAC SHA-256 Checksum (Base64): " + base64Checksum);
+                return base64Checksum;
             }
         }
         private void btnQRcode_Click(object sender, EventArgs e)
@@ -104,7 +103,18 @@ namespace AppAPI
 
         private void btnCreateQRVNPAY_Click(object sender, EventArgs e)
         {
-            
+            string orderCode = "VNP20220819000032";
+            string userID = "userId";
+            string terminalCode = "PE1118CC51277";
+            string merchantCode = "VNPAY_TEST";
+            int totalPaymentAmount = 33000;
+            string successUrl = "https://vnpay.vn/success";
+            string cancelUrl = "https://vnpay.vn/cancel";
+            string clientTransactionCode = orderCode + "1198";
+            string merchantMethodCode = "VNPAY_TEST_PE1118CC51277_QRCODE";
+            string methodCode = "VNPAY_QRCODE";
+            int amount = 33000;
+
             DateTime dateTime = DateTime.Now;
             //Lấy ngày hiện tại
             string nam = dateTime.ToString("yy");
@@ -112,39 +122,36 @@ namespace AppAPI
             string ngay = dateTime.Day.ToString("D2");
 
             //Lấy thời gian hiện tại
-            DateTime newTime = dateTime.AddMinutes(5);
+            DateTime newTime = dateTime.AddMinutes(15);
             string gio = dateTime.Hour.ToString("D2");
             string phut = newTime.Minute.ToString("D2");
-
-            //Băm checksum
-            string checksum = Checksum();
 
             //Giá trị đầu vào
             var apiRequest_vnpay = new APIRequest_VNPay
             {
-                userId = "toet",
-                checksum = checksum,
-                orderCode = "order-62",
+                userId = userID,
+                checksum = Checksum(orderCode,userID,terminalCode,merchantCode,totalPaymentAmount,successUrl,cancelUrl,clientTransactionCode, merchantMethodCode, methodCode, amount),
+                orderCode = orderCode,
                 payments = new Payments
                 {
                     qr = new Qr
                     {
-                        methodCode = "VNPAY_QRCODE",
-                        amount = 234000,
+                        methodCode = methodCode,
+                        amount = amount,
                         qrWidth = 400,
                         qrHeight = 400,
                         qrImageType = 0,
-                        customerPhone = "",
-                        merchantMethodCode = "FTI_PE4019B260249_QR_CODE",
-                        clientTransactionCode = "HNPMC25702"
+                        customerPhone = "0334246837",
+                        merchantMethodCode = merchantMethodCode,
+                        clientTransactionCode = orderCode + "1011"
                     }
                 },
-                cancelUrl = "https://vnpay.vn/cancel",
-                successUrl = "https://vnpay.vn/success",
-                terminalCode = "DEMO",
-                merchantCode = "FTI",
-                totalPaymentAmount = 234000,
-                expiredDate = nam + thang + ngay + gio + phut
+                successUrl = successUrl,
+                cancelUrl = cancelUrl,
+                terminalCode = terminalCode,
+                merchantCode = merchantCode,
+                totalPaymentAmount = totalPaymentAmount,
+                expiredDate = $"{nam}{thang}{ngay}{gio}{phut}"
             };
 
             var jsonRequest = JsonConvert.SerializeObject(apiRequest_vnpay);
