@@ -75,6 +75,7 @@ namespace AppAPI
                 return base64Checksum;
             }
         }
+        //VietQR
         private void btnQRcode_Click(object sender, EventArgs e)
         {
             var apiRequest = new APIRequest();
@@ -100,10 +101,11 @@ namespace AppAPI
             var image = Base64ToImage(dataResult.data.qrDataURL.Replace("data:image/png;base64,", ""));
             pictureBox1.Image = image;
         }
-
+        //VNPay
         private void btnCreateQRVNPAY_Click(object sender, EventArgs e)
         {
-            string orderCode = "VNP20220819000032";
+            //Thông tin đầu vào
+            string orderCode = "VNP20220819000036";
             string userID = "userId";
             string terminalCode = "PE1118CC51277";
             string merchantCode = "VNPAY_TEST";
@@ -115,8 +117,8 @@ namespace AppAPI
             string methodCode = "VNPAY_QRCODE";
             int amount = 33000;
 
-            DateTime dateTime = DateTime.Now;
             //Lấy ngày hiện tại
+            DateTime dateTime = DateTime.Now;
             string nam = dateTime.ToString("yy");
             string thang = dateTime.Month.ToString("D2");
             string ngay = dateTime.Day.ToString("D2");
@@ -143,7 +145,7 @@ namespace AppAPI
                         qrImageType = 0,
                         customerPhone = "0334246837",
                         merchantMethodCode = merchantMethodCode,
-                        clientTransactionCode = orderCode + "1011"
+                        clientTransactionCode = clientTransactionCode
                     }
                 },
                 successUrl = successUrl,
