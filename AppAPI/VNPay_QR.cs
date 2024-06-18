@@ -58,7 +58,7 @@ namespace AppAPI
         //Băm checksum
         public string Checksum(string ordercode, string userId, string terminalCode, string merchantCode, int totalPaymentAmount, string successUrl, string cancelUrl, string clientTransactionCode, string merchantMethodCode, string methodCode, int amount)
         {
-            string Keysecret = "72b1dcb6c927c619df57e0cb2cb68aa9";
+            string Keysecret = "0c9014bb65f163c49c619210ffa80f73";//"72b1dcb6c927c619df57e0cb2cb68aa9";
             string dataQrVnpay = Keysecret + ordercode + "|" + userId + "|" + terminalCode + "|" + merchantCode + "|" + totalPaymentAmount + "|" + successUrl + "|" + cancelUrl + "|" + clientTransactionCode + "|" + merchantMethodCode + "|" + methodCode + "|" + amount;
             string secretKey = Keysecret;
 
@@ -75,8 +75,8 @@ namespace AppAPI
                 byte[] hashBytes = hmac.ComputeHash(inputBytes);
                 string base64Checksum = Convert.ToBase64String(hashBytes);
 
-                Console.WriteLine("Input String: " + data);
-                Console.WriteLine("HMAC SHA-256 Checksum (Base64): " + base64Checksum);
+                //Console.WriteLine("Input String: " + data);
+                //Console.WriteLine("HMAC SHA-256 Checksum (Base64): " + base64Checksum);
                 return base64Checksum;
             }
         }
@@ -110,17 +110,17 @@ namespace AppAPI
         private void btnCreateQRVNPAY_Click(object sender, EventArgs e)
         {
             //Thông tin đầu vào
-            string orderCode = "VNP20220819000036";
+            string orderCode = "VNP20220819000052";
             string userID = "userId";
-            string terminalCode = "PE1118CC51277";
-            string merchantCode = "VNPAY_TEST";
-            int totalPaymentAmount = 33000;
+            string terminalCode = "P211207W00205";
+            string merchantCode = "VNPAY";
+            int totalPaymentAmount = 100;
             string successUrl = "https://vnpay.vn/success";
             string cancelUrl = "https://vnpay.vn/cancel";
             string clientTransactionCode = orderCode + "1198";
-            string merchantMethodCode = "VNPAY_TEST_PE1118CC51277_QRCODE";
+            string merchantMethodCode = "VNPAY_P211207W00205_QRCODE";
             string methodCode = "VNPAY_QRCODE";
-            int amount = 33000;
+            int amount = 100;
 
             //Lấy ngày hiện tại
             DateTime dateTime = DateTime.Now;
@@ -169,7 +169,9 @@ namespace AppAPI
             request.Method = Method.Post;
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/json", jsonRequest, ParameterType.RequestBody);
+            //popup QR lên controller
             var response = client.Execute(request);
+
             var content = response.Content;
             var dataResult = JsonConvert.DeserializeObject<APIResponse_VNPay>(content);
         }
