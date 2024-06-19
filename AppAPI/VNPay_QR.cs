@@ -110,17 +110,17 @@ namespace AppAPI
         private void btnCreateQRVNPAY_Click(object sender, EventArgs e)
         {
             //Thông tin đầu vào
-            string orderCode = "VNP20220819000052";
+            string orderCode = "VNP20220819000062";
             string userID = "userId";
             string terminalCode = "P211207W00205";
             string merchantCode = "VNPAY";
-            int totalPaymentAmount = 100;
+            int totalPaymentAmount = 2000000;
             string successUrl = "https://vnpay.vn/success";
             string cancelUrl = "https://vnpay.vn/cancel";
             string clientTransactionCode = orderCode + "1198";
             string merchantMethodCode = "VNPAY_P211207W00205_QRCODE";
             string methodCode = "VNPAY_QRCODE";
-            int amount = 100;
+            int amount = 2000000;
 
             //Lấy ngày hiện tại
             DateTime dateTime = DateTime.Now;
@@ -171,9 +171,13 @@ namespace AppAPI
             request.AddParameter("application/json", jsonRequest, ParameterType.RequestBody);
             //popup QR lên controller
             var response = client.Execute(request);
-
             var content = response.Content;
+            //Response trả về
             var dataResult = JsonConvert.DeserializeObject<APIResponse_VNPay>(content);
+            if (dataResult.code != "200")
+            {
+                MessageBox.Show("Lỗi");
+            }
         }
 
         //MoMo
